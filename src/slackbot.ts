@@ -120,7 +120,7 @@ app.command("/opendata", async ({ command, ack, say }) => {
     console.log(days)
 
     getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-    .then(async data => {
+    .then(async (data: any) => {
       let resultsArray: any[] = []
       for (const id in data.result.results){
         resultsArray = resultsArray.concat(data.result.results[id]);
@@ -150,7 +150,7 @@ app.command("/opendata", async ({ command, ack, say }) => {
       const days = 14
   
       getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-      .then(async data => {
+      .then(async (data: any) => {
         let resultsArray: any[] = []
         for (const id in data.result.results){
           resultsArray = resultsArray.concat(data.result.results[id]);
