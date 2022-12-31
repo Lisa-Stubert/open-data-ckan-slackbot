@@ -2,6 +2,7 @@ import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
 import cron from 'node-cron';
+const fetch = (url: string) => import('node-fetch').then(({default: fetch}) => fetch(url));
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
