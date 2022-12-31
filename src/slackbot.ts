@@ -140,10 +140,11 @@ app.command("/opendata", async ({ command, ack, say }) => {
 });
 
 // Cron job in ODIS Channel
-const task = cron.schedule(
-  '* * * * *',
-  //'0 12 * * FRI',
-  () => {
+// const task = cron.schedule(
+//   //'* * * * *',
+//   '0 12 * * FRI',
+//   () => {
+  function scheduled(){
     try {
       const days = 14
   
@@ -171,14 +172,15 @@ const task = cron.schedule(
         console.log("err")
       console.error(error);
     }
-  },
-  {
-      scheduled: true,
-      timezone: 'Europe/Berlin',
   }
-);
+scheduled()
+//   {
+//       scheduled: true,
+//       timezone: 'Europe/Berlin',
+//   }
+// );
 
-task.start();
+// task.start();
 
 
 
