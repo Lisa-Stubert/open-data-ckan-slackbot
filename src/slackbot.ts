@@ -1,6 +1,6 @@
+import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -14,35 +14,70 @@ const app = new App({
   receiver: expressReceiver
 });
 
+async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
+  try {
+    await app.client.chat.postMessage({
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channelId,
+      thread_ts: messageThreadTs,
+      text: "Hello :wave:"
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
+async function replyReaction(channelId: string, messageThreadTs: string) {
+  try {
+      await app.client.reactions.add({
+          token: process.env.SLACK_BOT_TOKEN,
+          name: 'robot_face',
+          channel: channelId,
+          timestamp: messageThreadTs,
+      });
+  } catch (error) {
+      console.error(error);
+  }
+}
 
-app.message(async ({ say }) => {
-  await say("Hi :wave:");
+app.message(async ({ message }) => {
+  await replyReaction(message.channel, message.ts);
+  await replyMessage(message.channel, message.ts);
 });
 
 app.command('/knowledge', async({body, ack}) => {
   ack();
   await app.client.chat.postEphemeral({
-    token: process.env.SLACK_BOT_TOKEN,
-    channel: body.channel_id,
-    text: "Greetings, user!" ,
-    user: body.user_id
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: body.channel_id,
+      text: "Greetings, user!" ,
+      user: body.user_id
   });
 });
 
-
-
-
-function parseRequestBody(stringBody: string | null) {
+function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
   try {
-    return JSON.parse(stringBody ?? "");
+    let inputStringBody: string = stringBody ?? "";
+    let result: any = {};
+
+    if(contentType && contentType === 'application/x-www-form-urlencoded') {
+      var keyValuePairs = inputStringBody.split('&');
+      keyValuePairs.forEach(function(pair: string): void {
+          let individualKeyValuePair: string[] = pair.split('=');
+          result[individualKeyValuePair[0]] = decodeURIComponent(individualKeyValuePair[1] || '');
+      });
+      return JSON.parse(JSON.stringify(result));
+    } else {
+      return JSON.parse(inputStringBody);
+    }
   } catch {
     return undefined;
   }
 }
 
 export async function handler(event: APIGatewayEvent, context: Context) {
-  const payload = parseRequestBody(event.body);
+  const payload = parseRequestBody(event.body, event.headers["content-type"]);
+
   if(payload && payload.type && payload.type === 'url_verification') {
     return {
       statusCode: 200,
