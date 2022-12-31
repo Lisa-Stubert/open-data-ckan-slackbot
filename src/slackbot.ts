@@ -14,9 +14,24 @@ const app = new App({
   receiver: expressReceiver
 });
 
+
+
 app.message(async ({ say }) => {
   await say("Hi :wave:");
 });
+
+app.command('/knowledge', async({body, ack}) => {
+  ack();
+  await app.client.chat.postEphemeral({
+    token: process.env.SLACK_BOT_TOKEN,
+    channel: body.channel_id,
+    text: "Greetings, user!" ,
+    user: body.user_id
+  });
+});
+
+
+
 
 function parseRequestBody(stringBody: string | null) {
   try {
