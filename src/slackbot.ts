@@ -118,7 +118,7 @@ app.command("/opendata", async ({ command, ack, say }) => {
     }
     console.log(days)
 
-    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
     .then(async data => {
       let resultsArray: any[] = []
       for (const id in data.result.results){
