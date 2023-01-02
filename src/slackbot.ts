@@ -13,7 +13,9 @@ const expressReceiver = new ExpressReceiver({
 const app = new App({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
   token: `${process.env.SLACK_BOT_TOKEN}`,
-  receiver: expressReceiver
+  receiver: expressReceiver,
+  socketMode: true,
+  appToken: `${process.env.APP_TOKEN}`,
 });
 
 // Declare functions that are needed for fetching and analysing date from CKAN API
