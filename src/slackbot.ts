@@ -1,9 +1,6 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-//import cron from 'node-cron';
-import { RequestInfo } from 'node-fetch';
-const fetch = (url: RequestInfo) => import('node-fetch').then(({default: fetch}) => fetch(url));
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -120,13 +117,11 @@ app.command("/opendata", async ({ command, ack, say }) => {
     }
     console.log(days)
 
-    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
-    .then(async (data: any) => {
-      console.log(data)
+    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+    .then(async data => {
       let resultsArray: any[] = []
       for (const id in data.result.results){
         resultsArray = resultsArray.concat(data.result.results[id]);
-
       }  
 
       const newestArray = findNewest(resultsArray, days)
@@ -142,51 +137,6 @@ app.command("/opendata", async ({ command, ack, say }) => {
     console.error(error);
   }
 });
-
-// Cron job in ODIS Channel
-// const task = cron.schedule(
-//   //'* * * * *',
-//   '0 12 * * FRI',
-//   () => {
-//   function scheduled(){
-//     try {
-//       const days = 14
-  
-//       getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-//       .then(async (data: any) => {
-//         let resultsArray: any[] = []
-//         for (const id in data.result.results){
-//           resultsArray = resultsArray.concat(data.result.results[id]);
-//         }   
-//       const newestArray = findNewest(resultsArray, days)
-//       const updatedArray = findUpdated(resultsArray, days)
-
-//       let text = "_Hier kommt die automatische Abfrage des Berliner Datenportals für die vergangene Woche._\n\n"
-//       const content = generateTextResponse(newestArray, updatedArray, days)
-
-//       text = text.concat(content)
-
-//       app.client.chat.postMessage({
-//         "channel": "C04GSFP558B",
-//         "text": text
-//       });
-//     });
-
-//     } catch (error) {
-//         console.log("err")
-//       console.error(error);
-//     }
-//   }
-// scheduled()
-//   {
-//       scheduled: true,
-//       timezone: 'Europe/Berlin',
-//   }
-// );
-
-// task.start();
-
-
 
 function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
   try {
