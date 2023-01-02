@@ -119,26 +119,27 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const resultsArray =getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
-      .then(async (data: any) => {
-      let resultsArray: any[] = []
-        for (const id in data.result.results){
-          resultsArray = resultsArray.concat(data.result.results[id]);
-        }
-      })
+      const resultsArray = getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
+      // .then(async (data: any) => {
+      // let resultsArray: any[] = []
+      //   for (const id in data.result.results){
+      //     resultsArray = resultsArray.concat(data.result.results[id]);
+      //   }
+      // })
       .then((resultsArray) => {
-        return resultsArray});
+        return resultsArray
+      });
 
       const newestArray = findNewest(resultsArray, days)
       const updatedArray = findUpdated(resultsArray, days)
       const text = generateTextResponse(newestArray, updatedArray, days)
-    console.log(text)
-    
+      console.log(text)
+
     // say(text)
     await app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
       channel: body.channel_id,
-      text: text,
+      text: "text",
       user: body.user_id
     });
 
@@ -170,8 +171,6 @@ function parseRequestBody(stringBody: string | null, contentType: string | undef
 
 export async function handler(event: APIGatewayEvent, context: Context) {
   const payload = parseRequestBody(event.body, event.headers["content-type"]);
-  console.log(event)
-  console.log(payload)
   if(payload && payload.type && payload.type === 'url_verification') {
     return {
       statusCode: 200,
