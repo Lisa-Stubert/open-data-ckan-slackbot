@@ -119,29 +119,37 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const resultsArray = getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
-      // .then(async (data: any) => {
-      // let resultsArray: any[] = []
-      //   for (const id in data.result.results){
-      //     resultsArray = resultsArray.concat(data.result.results[id]);
-      //   }
-      // })
-      .then((resultsArray) => {
-        return resultsArray
-      });
+      const result = getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
+      .then(async (data: any) => {
+      let resultsArray: any[] = []
+        for (const id in data.result.results){
+          resultsArray = resultsArray.concat(data.result.results[id]);
+        }
+        const newestArray = findNewest(resultsArray, days)
+        const updatedArray = findUpdated(resultsArray, days)
+        const text = generateTextResponse(newestArray, updatedArray, days)
+        return text
+      })
 
-      //const newestArray = findNewest(resultsArray, days)
-      //const updatedArray = findUpdated(resultsArray, days)
-      //const text = generateTextResponse(newestArray, updatedArray, days)
-      console.log(resultsArray)
+
+
+
+      const printResult = () => {
+        result.then((a) => {
+          console.log(a);
+          app.client.chat.postEphemeral({
+            token: process.env.SLACK_BOT_TOKEN,
+            channel: body.channel_id,
+            text: a,
+            user: body.user_id
+          });
+        });
+      };
+
+      printResult()
 
     // say(text)
-    await app.client.chat.postEphemeral({
-      token: process.env.SLACK_BOT_TOKEN,
-      channel: body.channel_id,
-      text: "text",
-      user: body.user_id
-    });
+
 
   //});
   } catch (error) {
