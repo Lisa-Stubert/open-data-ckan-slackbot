@@ -122,19 +122,42 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
     
       // const result = JSON.stringify(axios.get('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500'))
-      console.warn("richtige url");
-      axios
-        .get("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-        .then(function (response) {
-          console.log(response);
-        });
+      // console.warn("richtige url");
+      // axios
+      //   .get("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+      //   .then(function (response) {
+      //     console.log(response);
+      //   });
       
-      console.warn("dummy url");
-      axios
-        .get("https://httpbin.org/get")
-        .then(function (response) {
-          console.log(response);
-        });
+      // console.warn("dummy url");
+      // axios
+      //   .get("https://httpbin.org/get")
+      //   .then(function (response) {
+      //     console.log(response);
+      //   });
+
+      console.warn("try fetch https://reqbin.com/echo/get/json")
+      fetch('https://reqbin.com/echo/get/json', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => response.text())
+        .then(text => console.log(text))
+
+      console.warn("try fetch https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+        fetch('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500', {
+              method: 'GET',
+              headers: {
+                  'Accept': 'application/json',
+              },
+          })
+          .then(response => response.text())
+          .then(text => console.log(text))
+
+
+      // ORIGINAL
       // .then(async (data: any) => {
       // let resultsArray: any[] = []
       //   for (const id in data.result.results){
