@@ -1,8 +1,8 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-import fetch from 'node-fetch';
-//import axios from 'axios';
+//import fetch from 'node-fetch';
+import axios from 'axios';
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -21,7 +21,6 @@ const app = new App({
 // Declare functions that are needed for fetching and analysing date from CKAN API
 const getJSON = async (url: string) => {
   const response = await fetch(url);
-  console.warn(response.json());
   return response.json(); // get JSON from the response 
 }
 
@@ -121,9 +120,21 @@ app.command("/opendata", async ({ body, ack, say }) => {
       days = 7
     }
     console.log(days)
-
     
-      const result = getJSON('https://httpbin.org/get')
+      // const result = JSON.stringify(axios.get('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500'))
+      axios
+        .get("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+        .then(function (response) {
+          console.warn("richtige url");
+          console.log(response);
+        });
+      
+      axios
+        .get("https://httpbin.org/get")
+        .then(function (response) {
+          console.warn("dummy url");
+          console.log(response);
+        });
       // .then(async (data: any) => {
       // let resultsArray: any[] = []
       //   for (const id in data.result.results){
@@ -137,12 +148,11 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
       // const printResult = () => {
       //   result.then((a) => {
-          console.log(result);
-          console.log(JSON.stringify(result));
+      //     console.log(a);
           app.client.chat.postMessage({
             token: process.env.SLACK_BOT_TOKEN,
             channel: body.channel_id,
-            text: JSON.stringify(result)
+            text: result
           });
       //   });
       // };
