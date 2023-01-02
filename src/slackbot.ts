@@ -108,11 +108,11 @@ app.message(async ({ message }) => {
 });
 
 // Slash-Command to ask for newest data sets
-app.command("/opendata", async ({ command, ack, say }) => {
+app.command("/opendata", async ({ body, ack, say }) => {
   try {
-    await ack();
+    ack();
 
-    let days = Number.parseInt(command.text)
+    let days = Number.parseInt(body.text)
     if (!days) {
       days = 7
     }
@@ -131,14 +131,15 @@ app.command("/opendata", async ({ command, ack, say }) => {
     const text = generateTextResponse(newestArray, updatedArray, days)
 
     // say(text)
-    say({
+    await app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
-      text: "Hello :wave:"
+      channel: body.channel_id,
+      text: "Greetings, user!" ,
+      user: body.user_id
     });
 
   });
   } catch (error) {
-      console.log("err")
     console.error(error);
   }
 });
@@ -165,7 +166,8 @@ function parseRequestBody(stringBody: string | null, contentType: string | undef
 
 export async function handler(event: APIGatewayEvent, context: Context) {
   const payload = parseRequestBody(event.body, event.headers["content-type"]);
-
+  console.log(event)
+  console.log(payload)
   if(payload && payload.type && payload.type === 'url_verification') {
     return {
       statusCode: 200,
