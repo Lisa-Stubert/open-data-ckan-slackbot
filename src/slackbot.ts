@@ -130,10 +130,10 @@ app.command("/opendata", async ({ body, ack, say }) => {
         return resultsArray
       });
 
-      const newestArray = findNewest(resultsArray, days)
-      const updatedArray = findUpdated(resultsArray, days)
-      const text = generateTextResponse(newestArray, updatedArray, days)
-      console.log(text)
+      //const newestArray = findNewest(resultsArray, days)
+      //const updatedArray = findUpdated(resultsArray, days)
+      //const text = generateTextResponse(newestArray, updatedArray, days)
+      console.log(resultsArray)
 
     // say(text)
     await app.client.chat.postEphemeral({
