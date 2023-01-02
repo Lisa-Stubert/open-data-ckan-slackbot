@@ -1,6 +1,7 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
+const fetch = require('node-fetch')
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
