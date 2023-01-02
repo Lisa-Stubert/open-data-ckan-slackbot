@@ -14,6 +14,7 @@
         "@types/node": "^18.11.18",
         "@types/node-fetch": "^2.6.2",
         "dotenv": "^16.0.3",
+        "encoding": "^0.1.13",
         "node-fetch": "^3.3.0",
         "typescript": "^4.2.4"
     }
