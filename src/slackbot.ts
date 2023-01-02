@@ -122,17 +122,17 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
     
       // const result = JSON.stringify(axios.get('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500'))
+      console.warn("richtige url");
       axios
         .get("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
         .then(function (response) {
-          console.warn("richtige url");
           console.log(response);
         });
       
+      console.warn("dummy url");
       axios
         .get("https://httpbin.org/get")
         .then(function (response) {
-          console.warn("dummy url");
           console.log(response);
         });
       // .then(async (data: any) => {
