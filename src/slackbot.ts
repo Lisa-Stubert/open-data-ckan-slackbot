@@ -119,7 +119,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
-    .then(async data => {
+    .then(async (data: any) => {
       let resultsArray: any[] = []
       for (const id in data.result.results){
         resultsArray = resultsArray.concat(data.result.results[id]);
