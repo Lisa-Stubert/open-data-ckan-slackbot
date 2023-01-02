@@ -145,7 +145,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
       //   });
       // };
 
-      printResult()
+      //printResult()
 
     // say(text)
 
