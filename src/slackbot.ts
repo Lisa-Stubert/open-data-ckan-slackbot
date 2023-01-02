@@ -1,7 +1,8 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-import fetch from 'node-fetch';
+//import fetch from 'node-fetch';
+import axios from 'axios';
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -119,7 +120,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const result = getJSON('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500')
+      const result = axios.get('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500')
       .then(async (data: any) => {
       let resultsArray: any[] = []
         for (const id in data.result.results){
