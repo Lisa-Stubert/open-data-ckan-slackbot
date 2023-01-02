@@ -122,7 +122,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const result = JSON.stringify(axios.get('https://httpbin.org/get'))
+      const result = axios.get('https://httpbin.org/get')
       // .then(async (data: any) => {
       // let resultsArray: any[] = []
       //   for (const id in data.result.results){
@@ -136,11 +136,12 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
       // const printResult = () => {
       //   result.then((a) => {
-      //     console.log(a);
+          console.log(result);
+          console.log(JSON.stringify(result));
           app.client.chat.postMessage({
             token: process.env.SLACK_BOT_TOKEN,
             channel: body.channel_id,
-            text: result
+            text: JSON.stringify(result)
           });
       //   });
       // };
