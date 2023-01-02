@@ -119,7 +119,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const result = getJSON('http://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5')
+      const result = getJSON('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500')
       .then(async (data: any) => {
       let resultsArray: any[] = []
         for (const id in data.result.results){
@@ -131,17 +131,13 @@ app.command("/opendata", async ({ body, ack, say }) => {
         return text
       })
 
-
-
-
       const printResult = () => {
         result.then((a) => {
           console.log(a);
-          app.client.chat.postEphemeral({
+          app.client.chat.postMessage({
             token: process.env.SLACK_BOT_TOKEN,
             channel: body.channel_id,
-            text: "test",
-            user: body.user_id
+            text: "test"
           });
         });
       };
