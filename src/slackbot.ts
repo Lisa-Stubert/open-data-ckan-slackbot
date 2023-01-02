@@ -1,7 +1,7 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-const fetch = require('node-fetch')
+import fetch from 'node-fetch';
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -112,24 +112,24 @@ app.command("/opendata", async ({ body, ack, say }) => {
   try {
     ack();
 
-    // let days = Number.parseInt(body.text)
-    // if (!days) {
-    //   days = 7
-    // }
-    // console.log(days)
+    let days = Number.parseInt(body.text)
+    if (!days) {
+      days = 7
+    }
+    console.log(days)
 
-    // getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
-    // .then(async data => {
-    //   let resultsArray: any[] = []
-    //   for (const id in data.result.results){
-    //     resultsArray = resultsArray.concat(data.result.results[id]);
-    //   }  
+    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
+    .then(async data => {
+      let resultsArray: any[] = []
+      for (const id in data.result.results){
+        resultsArray = resultsArray.concat(data.result.results[id]);
+      }  
 
-    //   const newestArray = findNewest(resultsArray, days)
-    //   const updatedArray = findUpdated(resultsArray, days)
+      const newestArray = findNewest(resultsArray, days)
+      const updatedArray = findUpdated(resultsArray, days)
 
-    // const text = generateTextResponse(newestArray, updatedArray, days)
-
+    const text = generateTextResponse(newestArray, updatedArray, days)
+    console.log(text)
     // say(text)
     await app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
@@ -138,7 +138,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
       user: body.user_id
     });
 
-  //});
+  });
   } catch (error) {
     console.error(error);
   }
