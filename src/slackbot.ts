@@ -123,7 +123,10 @@ app.command("/opendata", async ({ body, ack, say }) => {
       let resultsArray: any[] = []
       for (const id in data.result.results){
         resultsArray = resultsArray.concat(data.result.results[id]);
-      }  
+      } 
+      return resultsArray
+    });
+    
 
     //   const newestArray = findNewest(resultsArray, days)
     //   const updatedArray = findUpdated(resultsArray, days)
