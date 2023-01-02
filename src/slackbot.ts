@@ -122,9 +122,11 @@ app.command("/opendata", async ({ command, ack, say }) => {
 
     getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
     .then(async (data: any) => {
+      console.log(data)
       let resultsArray: any[] = []
       for (const id in data.result.results){
         resultsArray = resultsArray.concat(data.result.results[id]);
+
       }  
 
       const newestArray = findNewest(resultsArray, days)
@@ -146,36 +148,36 @@ app.command("/opendata", async ({ command, ack, say }) => {
 //   //'* * * * *',
 //   '0 12 * * FRI',
 //   () => {
-  function scheduled(){
-    try {
-      const days = 14
+//   function scheduled(){
+//     try {
+//       const days = 14
   
-      getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-      .then(async (data: any) => {
-        let resultsArray: any[] = []
-        for (const id in data.result.results){
-          resultsArray = resultsArray.concat(data.result.results[id]);
-        }   
-      const newestArray = findNewest(resultsArray, days)
-      const updatedArray = findUpdated(resultsArray, days)
+//       getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+//       .then(async (data: any) => {
+//         let resultsArray: any[] = []
+//         for (const id in data.result.results){
+//           resultsArray = resultsArray.concat(data.result.results[id]);
+//         }   
+//       const newestArray = findNewest(resultsArray, days)
+//       const updatedArray = findUpdated(resultsArray, days)
 
-      let text = "_Hier kommt die automatische Abfrage des Berliner Datenportals für die vergangene Woche._\n\n"
-      const content = generateTextResponse(newestArray, updatedArray, days)
+//       let text = "_Hier kommt die automatische Abfrage des Berliner Datenportals für die vergangene Woche._\n\n"
+//       const content = generateTextResponse(newestArray, updatedArray, days)
 
-      text = text.concat(content)
+//       text = text.concat(content)
 
-      app.client.chat.postMessage({
-        "channel": "C04GSFP558B",
-        "text": text
-      });
-    });
+//       app.client.chat.postMessage({
+//         "channel": "C04GSFP558B",
+//         "text": text
+//       });
+//     });
 
-    } catch (error) {
-        console.log("err")
-      console.error(error);
-    }
-  }
-scheduled()
+//     } catch (error) {
+//         console.log("err")
+//       console.error(error);
+//     }
+//   }
+// scheduled()
 //   {
 //       scheduled: true,
 //       timezone: 'Europe/Berlin',
