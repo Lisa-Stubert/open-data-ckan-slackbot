@@ -140,7 +140,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
           app.client.chat.postEphemeral({
             token: process.env.SLACK_BOT_TOKEN,
             channel: body.channel_id,
-            text: a,
+            text: "test",
             user: body.user_id
           });
         });
