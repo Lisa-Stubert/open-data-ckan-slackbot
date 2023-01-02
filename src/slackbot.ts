@@ -130,7 +130,11 @@ app.command("/opendata", async ({ command, ack, say }) => {
 
     const text = generateTextResponse(newestArray, updatedArray, days)
 
-    say(text)
+    // say(text)
+    say({
+      token: process.env.SLACK_BOT_TOKEN,
+      text: "Hello :wave:"
+    });
 
   });
   } catch (error) {
