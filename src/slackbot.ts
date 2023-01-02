@@ -118,7 +118,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     }
     console.log(days)
 
-    getJSON("https://cat-fact.herokuapp.com/facts")
+    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=5")
     // .then(async (data: any) => {
     //   let resultsArray: any[] = []
     //   for (const id in data.result.results){
@@ -136,9 +136,9 @@ app.command("/opendata", async ({ body, ack, say }) => {
       channel: body.channel_id,
       text: "Greetings, user!" ,
       user: body.user_id
-    // });
+    });
 
-  });
+  //});
   } catch (error) {
     console.error(error);
   }
