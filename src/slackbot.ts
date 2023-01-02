@@ -1,8 +1,8 @@
 import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
-//import fetch from 'node-fetch';
-import axios from 'axios';
+import fetch from 'node-fetch';
+//import axios from 'axios';
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -21,6 +21,7 @@ const app = new App({
 // Declare functions that are needed for fetching and analysing date from CKAN API
 const getJSON = async (url: string) => {
   const response = await fetch(url);
+  console.warn(response.json());
   return response.json(); // get JSON from the response 
 }
 
@@ -122,7 +123,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     console.log(days)
 
     
-      const result = axios.get('https://httpbin.org/get')
+      const result = getJSON('https://httpbin.org/get')
       // .then(async (data: any) => {
       // let resultsArray: any[] = []
       //   for (const id in data.result.results){
