@@ -98,7 +98,7 @@ app.message(async ({ message }) => {
 
 // Slash-Command to ask for newest data sets
 app.command("/opendata", async ({ body, ack, say }) => {
-  try {
+  // try {
     ack();
 
     let days = Number.parseInt(body.text)
@@ -167,10 +167,11 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
 
   //});
-  } catch (error) {
-    console.error(error);
-  }
-});
+//   } catch (error) {
+//     console.error(error);
+//   }
+}
+);
 
 function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
   try {
