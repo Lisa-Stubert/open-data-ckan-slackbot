@@ -92,21 +92,7 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
   }
 }
 
-async function replyReaction(channelId: string, messageThreadTs: string) {
-  try {
-      await app.client.reactions.add({
-          token: process.env.SLACK_BOT_TOKEN,
-          name: 'robot_face',
-          channel: channelId,
-          timestamp: messageThreadTs,
-      });
-  } catch (error) {
-      console.error(error);
-  }
-}
-
 app.message(async ({ message }) => {
-  await replyReaction(message.channel, message.ts);
   await replyMessage(message.channel, message.ts);
 });
 
@@ -136,7 +122,6 @@ app.command("/opendata", async ({ body, ack, say }) => {
       //     console.log(response);
       //   });
 
-      console.warn("try fetch https://reqbin.com/echo/get/json")
       fetch('https://reqbin.com/echo/get/json', {
             method: 'GET',
             headers: {
@@ -146,7 +131,6 @@ app.command("/opendata", async ({ body, ack, say }) => {
         .then(response => response.text())
         .then(text => console.log(text))
 
-      console.warn("try fetch https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
         fetch('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500', {
               method: 'GET',
               headers: {
@@ -226,7 +210,13 @@ export async function handler(event: APIGatewayEvent, context: Context) {
     },
   })
   .then(response => response.text())
-  .then(text => console.log(text))
+  .then(text => console.warn(text))
+
+  app.client.chat.postMessage({
+    token: process.env.SLACK_BOT_TOKEN,
+    channel: body.channel_id,
+    text: "lol3000"
+  });
 
   const slackEvent: ReceiverEvent = {
     body: payload,
