@@ -219,6 +219,14 @@ export async function handler(event: APIGatewayEvent, context: Context) {
       body: payload.challenge
     };
   }
+  fetch('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500', {
+    method: 'GET',
+    headers: {
+        'Accept': 'application/json',
+    },
+  })
+  .then(response => response.text())
+  .then(text => console.log(text))
 
   const slackEvent: ReceiverEvent = {
     body: payload,
