@@ -7,7 +7,7 @@ dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
-  processBeforeResponse: true
+  processBeforeResponse: false
 });
 
 const app = new App({
