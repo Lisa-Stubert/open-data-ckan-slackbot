@@ -214,7 +214,7 @@ export async function handler(event: APIGatewayEvent, context: Context) {
 
   app.client.chat.postMessage({
     token: process.env.SLACK_BOT_TOKEN,
-    channel: body.channel_id,
+    channel: "C04GSFP558B",
     text: "lol3000"
   });
 
