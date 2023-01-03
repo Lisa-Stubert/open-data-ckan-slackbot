@@ -113,8 +113,8 @@ app.command("/opendata", async ({ body, ack, say }) => {
    try {
     ack();
 
-    const { fileContents } = require(`../../src/api.json`);
-    const resultsArray = JSON.parse(fileContents);
+    //const { fileContents } = require(`../../src/api.json`);
+    const resultsArray = JSON.parse('{"key":"value"}');
 
     let days = Number.parseInt(body.text)
     if (!days) {
