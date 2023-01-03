@@ -122,36 +122,31 @@ app.command("/opendata", async ({ body, ack, say }) => {
       //     console.log(response);
       //   });
 
-      fetch('https://reqbin.com/echo/get/json', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            },
-        })
-        .then(response => response.text())
-        .then(text => console.log(text))
 
-        fetch('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500', {
-              method: 'GET',
-              headers: {
-                  'Accept': 'application/json',
-              },
-          })
-          .then(response => response.text())
-          .then(text => console.log(text))
+      //console.warn("try fetch https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+      async function getData() {
+        await getJSON('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500')
+        //, {
+          //     method: 'GET',
+          //     headers: {
+          //         'Accept': 'application/json',
+          //     },
+          // })
+          // .then(response => response.text())
+          // .then(text => console.log(text))
 
 
       // ORIGINAL
-      // .then(async (data: any) => {
-      // let resultsArray: any[] = []
-      //   for (const id in data.result.results){
-      //     resultsArray = resultsArray.concat(data.result.results[id]);
-      //   }
-      //   const newestArray = findNewest(resultsArray, days)
-      //   const updatedArray = findUpdated(resultsArray, days)
-      //   const text = generateTextResponse(newestArray, updatedArray, days)
-      //   return text
-      // })
+      .then(async (data: any) => {
+      let resultsArray: any[] = []
+        for (const id in data.result.results){
+          resultsArray = resultsArray.concat(data.result.results[id]);
+        }
+        const newestArray = findNewest(resultsArray, days)
+        const updatedArray = findUpdated(resultsArray, days)
+        const text = generateTextResponse(newestArray, updatedArray, days)
+        return text
+      })
 
       // const printResult = () => {
       //   result.then((a) => {
@@ -163,7 +158,9 @@ app.command("/opendata", async ({ body, ack, say }) => {
           });
       //   });
       // };
+    }
 
+    getData()
       //printResult()
 
     // say(text)
@@ -203,20 +200,6 @@ export async function handler(event: APIGatewayEvent, context: Context) {
       body: payload.challenge
     };
   }
-  fetch('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500', {
-    method: 'GET',
-    headers: {
-        'Accept': 'application/json',
-    },
-  })
-  .then(response => response.text())
-  .then(text => console.warn(text))
-
-  app.client.chat.postMessage({
-    token: process.env.SLACK_BOT_TOKEN,
-    channel: "C04GSFP558B",
-    text: "lol3000"
-  });
 
   const slackEvent: ReceiverEvent = {
     body: payload,
