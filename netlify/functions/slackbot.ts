@@ -101,12 +101,9 @@ const processData = async (data:any, days: number, channel_id: string) => {
   const text = generateTextResponse(newestArray, updatedArray, days)
   console.log("after generate text response")
 
-  app.client.chat.postMessage({
-    token: process.env.SLACK_BOT_TOKEN,
-    channel: channel_id,
-    text: text
-  })
+
   console.log("after post message to slack")
+  return text
 }
 
 // Test Message: Bot reply on messages in slack channel
@@ -145,7 +142,12 @@ app.command("/opendata", async ({ body, ack, say }) => {
     if (!data) {
       console.error("No data found")
     }
-    await processData(data, days, body.channel_id);
+    const text = await processData(data, days, body.channel_id);
+    app.client.chat.postMessage({
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: body.channel_id,
+      text: text
+    })
   }
 
 
