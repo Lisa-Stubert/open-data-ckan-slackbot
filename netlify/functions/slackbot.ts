@@ -100,9 +100,6 @@ const processData = async (data:any, days: number, channel_id: string) => {
 
   const text = generateTextResponse(newestArray, updatedArray, days)
   console.log("after generate text response")
-
-
-  console.log("after post message to slack")
   return text
 }
 
@@ -110,7 +107,7 @@ const processData = async (data:any, days: number, channel_id: string) => {
 async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
   try {
     await app.client.chat.postMessage({
-      token: process.env.SLACK_BOT_TOKEN,
+      token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: channelId,
       thread_ts: messageThreadTs,
       text: "Hello :wave: This is a test."
@@ -129,13 +126,13 @@ app.message(async ({ message }) => {
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
 app.command("/opendata", async ({ body, ack, say }) => {
   try {
-    ack();
+    await ack();
 
     let days = Number.parseInt(body.text)
     if (!days) {
       days = 7
     }
-    console.log(days)
+    console.log("days",days)
     
     const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
 
@@ -144,13 +141,13 @@ app.command("/opendata", async ({ body, ack, say }) => {
     }
     const text = await processData(data, days, body.channel_id);
     app.client.chat.postMessage({
-      token: process.env.SLACK_BOT_TOKEN,
+      token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
       text: text
     })
+    console.log("after post message to slack")
+
   }
-
-
    catch (error) {
     console.error(error);
   }
