@@ -5,8 +5,9 @@
     "scripts": {
         "build": "tsc"
     },
+    "type": "module",
     "author": {
-        "name": "Clyde D'Souza"
+        "name": "Lisa Stubert"
     },
     "dependencies": {
         "@slack/bolt": "^3.12.2",
