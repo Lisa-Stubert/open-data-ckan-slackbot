@@ -1,5 +1,2 @@
-[build]
-  command = "npm run build"
-
 [functions]
   external_node_modules = ["express"]
