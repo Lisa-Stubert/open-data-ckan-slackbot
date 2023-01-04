@@ -23,7 +23,13 @@ const app = new App({
 // Declare functions that are needed for fetching and analysing date from CKAN API
 const getJSON = async (url: string) => {
   const response = await fetch(url);
-  return response.json(); // get JSON from the response 
+  if (!response.ok) {
+    const txt = await response.text();
+    throw new Error(txt)
+  }
+  const json = await response.json();
+  console.info("JSON in getJSON", json);
+  return await json // get JSON from the response 
 }
 
 function findNewest(data: { [x: string]: any; }, days: number) {
@@ -39,7 +45,7 @@ function findNewest(data: { [x: string]: any; }, days: number) {
 }
 
 function findUpdated(data: { [x: string]: any; }, days: number) {
-  var today = new Date()
+  const today = new Date()
   let updatedArray: any[] = []
   for (const obj in data) {
     try {
@@ -79,6 +85,21 @@ function generateTextResponse (newestArray: any[], updatedArray: any[], days: nu
 }
 
 
+const processData = async (data:any, days: number, channel_id: string) => {
+  let resultsArray: any[] = []
+  for (const id in data.result.results){
+    resultsArray = resultsArray.concat(data.result.results[id]);
+  }  
+  const newestArray = findNewest(resultsArray, days)
+  const updatedArray = findUpdated(resultsArray, days)
+  const text = generateTextResponse(newestArray, updatedArray, days)
+
+  app.client.chat.postMessage({
+    token: process.env.SLACK_BOT_TOKEN,
+    channel: channel_id,
+    text: text
+  })
+}
 
 // Test Message: Bot reply on messages in slack channel
 async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
@@ -111,23 +132,12 @@ app.command("/opendata", async ({ body, ack, say }) => {
     }
     console.log(days)
     
-    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
-    .then(async (data:any) => {
-      let resultsArray: any[] = []
-      for (const id in data.result.results){
-        resultsArray = resultsArray.concat(data.result.results[id]);
-      }  
-      const newestArray = findNewest(resultsArray, days)
-      const updatedArray = findUpdated(resultsArray, days)
-      const text = generateTextResponse(newestArray, updatedArray, days)
+    const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
 
-      app.client.chat.postMessage({
-        token: process.env.SLACK_BOT_TOKEN,
-        channel: body.channel_id,
-        text: text
-      })
-    })
+
+    await processData(data, days, body.channel_id);
   }
+
 
    catch (error) {
     console.error(error);

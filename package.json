@@ -8,7 +8,7 @@
     "author": {
         "name": "Clyde D'Souza"
     },
-    "devDependencies": {
+    "dependencies": {
         "@slack/bolt": "^3.12.2",
         "@types/aws-lambda": "^8.10.75",
         "@types/node": "^18.11.18",
@@ -18,5 +18,7 @@
         "encoding": "^0.1.13",
         "node-fetch": "^3.3.0",
         "typescript": "^4.2.4"
+    },
+    "devDependencies": {
     }
 }
