@@ -90,16 +90,23 @@ const processData = async (data:any, days: number, channel_id: string) => {
   let resultsArray: any[] = []
   for (const id in data.result.results){
     resultsArray = resultsArray.concat(data.result.results[id]);
-  }  
+  }
+  console.log("after first for loop")
   const newestArray = findNewest(resultsArray, days)
+  console.log("after find newest")
+  
   const updatedArray = findUpdated(resultsArray, days)
+  console.log("after find updated")
+
   const text = generateTextResponse(newestArray, updatedArray, days)
+  console.log("after generate text response")
 
   app.client.chat.postMessage({
     token: process.env.SLACK_BOT_TOKEN,
     channel: channel_id,
     text: text
   })
+  console.log("after post message to slack")
 }
 
 // Test Message: Bot reply on messages in slack channel
