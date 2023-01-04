@@ -29,8 +29,7 @@ const getJSON = async (url: string) => {
     throw new Error(txt)
   }
   const json = await response.json();
-  console.info("JSON in getJSON", JSON.stringify(json,null,2));
-  return await json // get JSON from the response 
+  return json // get JSON from the response 
 }
 
 function findNewest(data: { [x: string]: any; }, days: number) {
@@ -91,15 +90,9 @@ const processData = async (data:any, days: number, channel_id: string) => {
   for (const id in data.result.results){
     resultsArray = resultsArray.concat(data.result.results[id]);
   }
-  console.log("after first for loop")
   const newestArray = findNewest(resultsArray, days)
-  console.log("after find newest")
-  
   const updatedArray = findUpdated(resultsArray, days)
-  console.log("after find updated")
-
   const text = generateTextResponse(newestArray, updatedArray, days)
-  console.log("after generate text response")
   return text
 }
 
@@ -136,16 +129,12 @@ app.command("/opendata", async ({ body, ack, say }) => {
     
     const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
 
-    if (!data) {
-      console.error("No data found")
-    }
     const text = await processData(data, days, body.channel_id);
     await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
       text
     })
-    console.log("after post message to slack")
 
   }
    catch (error) {
