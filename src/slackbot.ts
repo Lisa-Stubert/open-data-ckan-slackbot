@@ -2,8 +2,6 @@ import { App, ExpressReceiver, ReceiverEvent } from '@slack/bolt'
 import { APIGatewayEvent, Context } from 'aws-lambda'
 import * as dotenv from 'dotenv'
 import fetch from 'node-fetch';
-import axios from 'axios';
-import fs from 'fs';
 dotenv.config();
 
 const expressReceiver = new ExpressReceiver({
@@ -18,6 +16,9 @@ const app = new App({
   socketMode: true,
   appToken: `${process.env.APP_TOKEN}`,
 });
+
+
+
 
 // Declare functions that are needed for fetching and analysing date from CKAN API
 const getJSON = async (url: string) => {
@@ -65,7 +66,6 @@ function generateTextResponse (newestArray: any[], updatedArray: any[], days: nu
       text = text.concat(">*<https://daten.berlin.de/search/node/" + newestArray[obj].title.toString().replace(/\s/g, "%20") + "|" + newestArray[obj].title.toString() + ">*\n>" + newestArray[obj].author.toString() + "\n>_" + newestArray[obj].date_released.toString() + "_\n")
     }
   }
-
   if (updatedArray.length === 0) {
     text = text.concat("\nIn den letzten " + days + " Tagen wurden keine der bereits veröffentlichten Datensätze im Berliner Datenportal geupdated.");
   }
@@ -80,41 +80,30 @@ function generateTextResponse (newestArray: any[], updatedArray: any[], days: nu
 
 
 
+// Test Message: Bot reply on messages in slack channel
 async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
   try {
     await app.client.chat.postMessage({
       token: process.env.SLACK_BOT_TOKEN,
       channel: channelId,
       thread_ts: messageThreadTs,
-      text: "Hello :wave:"
+      text: "Hello :wave: This is a test."
     });
   } catch (error) {
     console.error(error);
   }
 }
 
-async function readJsonFile(filepath: string) {
-  // Read the file contents as a string
-    const fileContents = await fs.promises.readFile(filepath, 'utf-8');
-  
-    // Parse the string as json
-    const data = JSON.parse(fileContents);
-  
-    // Return the data
-    return data;
-  }
-
 app.message(async ({ message }) => {
   await replyMessage(message.channel, message.ts);
 });
 
-// Slash-Command to ask for newest data sets
-app.command("/opendata", async ({ body, ack, say }) => {
-   try {
-    ack();
 
-    //const { fileContents } = require(`../../src/api.json`);
-    const resultsArray = JSON.parse('{"key":"value"}');
+
+// This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
+app.command("/opendata", async ({ body, ack, say }) => {
+  try {
+    ack();
 
     let days = Number.parseInt(body.text)
     if (!days) {
@@ -122,74 +111,72 @@ app.command("/opendata", async ({ body, ack, say }) => {
     }
     console.log(days)
     
-      // // const result = JSON.stringify(axios.get('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500'))
-      // // console.warn("richtige url");
-      // // axios
-      // //   .get("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-      // //   .then(function (response) {
-      // //     console.log(response);
-      // //   });
-      
-      // // console.warn("dummy url");
-      // // axios
-      // //   .get("https://httpbin.org/get")
-      // //   .then(function (response) {
-      // //     console.log(response);
-      // //   });
+    getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
+    .then(async (data:any) => {
+      let resultsArray: any[] = []
+      for (const id in data.result.results){
+        resultsArray = resultsArray.concat(data.result.results[id]);
+      }  
+      const newestArray = findNewest(resultsArray, days)
+      const updatedArray = findUpdated(resultsArray, days)
+      const text = generateTextResponse(newestArray, updatedArray, days)
 
+      app.client.chat.postMessage({
+        token: process.env.SLACK_BOT_TOKEN,
+        channel: body.channel_id,
+        text: text
+      })
+    })
+  }
 
-      // //console.warn("try fetch https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
-      // async function getData() {
-      //   await getJSON('https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500')
-      //   //, {
-      //     //     method: 'GET',
-      //     //     headers: {
-      //     //         'Accept': 'application/json',
-      //     //     },
-      //     // })
-      //     // .then(response => response.text())
-      //     // .then(text => console.log(text))
-
-
-      // // ORIGINAL
-      // .then(async (data: any) => {
-      // let resultsArray: any[] = []
-      //   for (const id in data.result.results){
-      //     resultsArray = resultsArray.concat(data.result.results[id]);
-      //   }
-
-        //const resultsArray = await readJsonFile('/api.json');
-
-        const newestArray = findNewest(resultsArray, days)
-        const updatedArray = findUpdated(resultsArray, days)
-        const text = generateTextResponse(newestArray, updatedArray, days)
-        //return text
-      //})
-
-      // const printResult = () => {
-      //   result.then((a) => {
-      //     console.log(a);
-        app.client.chat.postMessage({
-          token: process.env.SLACK_BOT_TOKEN,
-          channel: body.channel_id,
-          text: "lol3000"
-        })
-      //   });
-      // };
-   // }
-
-    //getData()
-      //printResult()
-
-    // say(text)
-      }
-
-  // });
    catch (error) {
     console.error(error);
   }
-//}
 });
+
+
+// Cron job in ODIS Channel
+ // const task = cron.schedule(
+ //   //'* * * * *',
+ //   '0 12 * * FRI',
+ //   () => {
+ //   function scheduled(){
+ //     try {
+ //       const days = 14
+
+ //       getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
+ //       .then(async (data: any) => {
+ //         let resultsArray: any[] = []
+ //         for (const id in data.result.results){
+ //           resultsArray = resultsArray.concat(data.result.results[id]);
+ //         }   
+ //       const newestArray = findNewest(resultsArray, days)
+ //       const updatedArray = findUpdated(resultsArray, days)
+
+ //       let text = "_Hier kommt die automatische Abfrage des Berliner Datenportals für die vergangene Woche._\n\n"
+ //       const content = generateTextResponse(newestArray, updatedArray, days)
+
+ //       text = text.concat(content)
+
+ //       app.client.chat.postMessage({
+ //         "channel": "C04GSFP558B",
+ //         "text": text
+ //       });
+ //     });
+
+ //     } catch (error) {
+ //         console.log("err")
+ //       console.error(error);
+ //     }
+ //   }
+ // scheduled()
+ //   {
+ //       scheduled: true,
+ //       timezone: 'Europe/Berlin',
+ //   }
+ // );
+
+ // task.start();
 
 function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
   try {
