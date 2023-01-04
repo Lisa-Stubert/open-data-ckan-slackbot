@@ -143,7 +143,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
-      text: text
+      text: "testest"
     })
     console.log("after post message to slack")
 
