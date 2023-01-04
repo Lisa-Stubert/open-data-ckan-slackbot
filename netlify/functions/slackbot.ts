@@ -140,10 +140,10 @@ app.command("/opendata", async ({ body, ack, say }) => {
       console.error("No data found")
     }
     const text = await processData(data, days, body.channel_id);
-    app.client.chat.postMessage({
+    await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
-      text: "testest"
+      text
     })
     console.log("after post message to slack")
 
