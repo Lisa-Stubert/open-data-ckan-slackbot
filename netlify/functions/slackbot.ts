@@ -29,7 +29,7 @@ const getJSON = async (url: string) => {
     throw new Error(txt)
   }
   const json = await response.json();
-  console.info("JSON in getJSON", json);
+  console.info("JSON in getJSON", JSON.stringify(json,null,2));
   return await json // get JSON from the response 
 }
 
@@ -135,7 +135,9 @@ app.command("/opendata", async ({ body, ack, say }) => {
     
     const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=50")
 
-
+    if (!data) {
+      console.error("No data found")
+    }
     await processData(data, days, body.channel_id);
   }
 
