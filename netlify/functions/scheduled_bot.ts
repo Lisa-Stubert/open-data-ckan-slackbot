@@ -19,8 +19,6 @@ const app = new App({
 });
 
 
-
-
 // Declare functions that are needed for fetching and analysing date from CKAN API
 const getJSON = async (url: string) => {
   const response = await fetch(url);
@@ -96,25 +94,6 @@ const processData = async (data:any, days: number, channel_id: string) => {
 }
 
 
-// Test Message: Bot reply on messages in slack channel
-async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
-  try {
-    await app.client.chat.postMessage({
-      token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: channelId,
-      thread_ts: messageThreadTs,
-      text: "Hello :wave: This is a test."
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-app.message(async ({ message }) => {
-  await replyMessage(message.channel, message.ts);
-});
-
-
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
 app.command("/opendata", async ({ body, ack, say }) => {
@@ -144,47 +123,26 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
 
 // Cron job in ODIS Channel
- // const task = cron.schedule(
- //   //'* * * * *',
- //   '0 12 * * FRI',
- //   () => {
- //   function scheduled(){
- //     try {
- //       const days = 14
 
- //       getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=500")
- //       .then(async (data: any) => {
- //         let resultsArray: any[] = []
- //         for (const id in data.result.results){
- //           resultsArray = resultsArray.concat(data.result.results[id]);
- //         }   
- //       const newestArray = findNewest(resultsArray, days)
- //       const updatedArray = findUpdated(resultsArray, days)
+   async function scheduled(){
+    try {
+      const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
 
- //       let text = "_Hier kommt die automatische Abfrage des Berliner Datenportals für die vergangene Woche._\n\n"
- //       const content = generateTextResponse(newestArray, updatedArray, days)
+      const days = 7
+      const channel_id =  "C04GSFP558B"
+      const text = await processData(data, days, channel_id);
+      await app.client.chat.postMessage({
+        token: `${process.env.SLACK_BOT_TOKEN}`,
+        channel: channel_id,
+        text
+      })
+  } catch (error) {
+       console.error(error);
+     }
+   }
+   
+ scheduled()
 
- //       text = text.concat(content)
-
- //       app.client.chat.postMessage({
- //         "channel": "C04GSFP558B",
- //         "text": text
- //       });
- //     });
-
- //     } catch (error) {
- //         console.log("err")
- //       console.error(error);
- //     }
- //   }
- // scheduled()
- //   {
- //       scheduled: true,
- //       timezone: 'Europe/Berlin',
- //   }
- // );
-
- // task.start();
 
  
 function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
