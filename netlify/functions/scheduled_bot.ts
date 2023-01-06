@@ -108,7 +108,7 @@ async function Message(): Promise<void> {
   }
 }
 
- Message();
+
 
 
 
@@ -135,6 +135,7 @@ function parseRequestBody(stringBody: string | null, contentType: string | undef
 
 const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) => {
   const payload = parseRequestBody(event.body, event.headers["content-type"]);
+  Message();
   if(payload && payload.type && payload.type === 'url_verification') {
     return {
       statusCode: 200,
