@@ -125,7 +125,7 @@ async function Message() {
     console.error(error);
   }
 }
-Message();
+await Message();
 
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
