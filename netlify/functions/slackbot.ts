@@ -114,9 +114,9 @@ app.message(async ({ message }) => {
   await replyMessage(message.channel, message.ts);
 });
 
-function Message() {
+async function Message() {
   try {
-    app.client.chat.postMessage({
+   await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: "C04GSFP558B",
       text: "Hello :wave: This is a test."
