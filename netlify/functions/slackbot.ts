@@ -110,15 +110,15 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
   }
 }
 
-app.message(async ({ message }) => {
-  await replyMessage(message.channel, message.ts);
-});
+// app.message(async ({ message }) => {
+//   await replyMessage(message.channel, message.ts);
+// });
 
-app.client.chat.postMessage({
-      token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: "C04GSFP558B",
-      text: "Hello :wave: This is a test."
-    });
+// app.client.chat.postMessage({
+//       token: `${process.env.SLACK_BOT_TOKEN}`,
+//       channel: "C04GSFP558B",
+//       text: "Hello :wave: This is a test."
+//     });
 
 
 
