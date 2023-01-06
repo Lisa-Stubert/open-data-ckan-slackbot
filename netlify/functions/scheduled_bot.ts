@@ -94,54 +94,26 @@ const processData = async (data:any, days: number, channel_id: string) => {
 }
 
 
-
-// This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
-app.command("/opendata", async ({ body, ack, say }) => {
+// Cron job in ODIS Channel
+app.message('wake me up', async ({ message, client, logger }) => {
   try {
-    await ack();
-
-    let days = Number.parseInt(body.text)
-    if (!days) {
-      days = 7
-    }
-    console.log("days",days)
-    
     const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
 
-    const text = await processData(data, days, body.channel_id);
-    await app.client.chat.postMessage({
-      token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: body.channel_id,
-      text
-    })
+    const days = 7
+    const channel_id =  "C04GSFP558B"
+    const text = await processData(data, days, channel_id);
 
+     app.client.chat.postMessage({
+      token: `${process.env.SLACK_BOT_TOKEN}`,
+      channel: channel_id,
+      text:text
+    })
   }
-   catch (error) {
-    console.error(error);
+  catch (error) {
+    logger.error(error);
   }
 });
 
-
-// Cron job in ODIS Channel
-
-   async function scheduled(){
-    try {
-      const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
-
-      const days = 7
-      const channel_id =  "C04GSFP558B"
-      const text = await processData(data, days, channel_id);
-      await app.client.chat.postMessage({
-        token: `${process.env.SLACK_BOT_TOKEN}`,
-        channel: channel_id,
-        text
-      })
-  } catch (error) {
-       console.error(error);
-     }
-   }
-   
- scheduled()
 
 
  
