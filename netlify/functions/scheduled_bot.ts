@@ -95,25 +95,22 @@ const processData = async (data:any, days: number, channel_id: string) => {
 
 
 // Cron job in ODIS Channel
-app.message('wake me up', async ({ message, client, logger }) => {
+// Test Message: Bot reply on messages in slack channel
+async function Message(): Promise<void> {
   try {
-    const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
-
-    const days = 7
-    const channel_id =  "C04GSFP558B"
-    const text = await processData(data, days, channel_id);
-
-     app.client.chat.postMessage({
+    await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: channel_id,
-      text:text
-    })
+      channel: "C04GSFP558B",
+      text: "Hello :wave: This is a test."
+    });
+  } catch (error) {
+    console.error(error);
   }
-  catch (error) {
-    logger.error(error);
-  }
-});
+}
 
+app.message(async ({ message }) => {
+  await Message();
+});
 
 
  
