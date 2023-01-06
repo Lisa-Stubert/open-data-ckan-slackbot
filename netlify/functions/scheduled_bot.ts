@@ -108,9 +108,8 @@ async function Message(): Promise<void> {
   }
 }
 
-app.message(async ({ message }) => {
-  await Message();
-});
+ Message();
+
 
 
  
