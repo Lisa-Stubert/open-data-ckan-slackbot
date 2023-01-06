@@ -96,9 +96,9 @@ const processData = async (data:any, days: number, channel_id: string) => {
 
 // Cron job in ODIS Channel
 // Test Message: Bot reply on messages in slack channel
-async function Message(): Promise<void> {
+function Message(): Promise<void> {
   try {
-    await app.client.chat.postMessage({
+    app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: "C04GSFP558B",
       text: "Hello :wave: This is a test."
