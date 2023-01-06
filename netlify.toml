@@ -1,5 +1,5 @@
 [functions]
   external_node_modules = ["express"]
 
-[functions."scheduled_bot"]
+[functions."slackbot"]
  schedule = "* * * * *"

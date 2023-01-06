@@ -114,6 +114,18 @@ app.message(async ({ message }) => {
   await replyMessage(message.channel, message.ts);
 });
 
+function Message() {
+  try {
+    app.client.chat.postMessage({
+      token: `${process.env.SLACK_BOT_TOKEN}`,
+      channel: "C04GSFP558B",
+      text: "Hello :wave: This is a test."
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+Message();
 
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
@@ -186,7 +198,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
  // task.start();
 
- 
+
 function parseRequestBody(stringBody: string | null, contentType: string | undefined) {
   try {
     let inputStringBody: string = stringBody ?? "";
