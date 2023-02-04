@@ -149,7 +149,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     
     const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
 
-    const text = await processData(data, days, body.channel_id);
+    const text = await processData(data, days, "C04GSFP558B");
     await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
