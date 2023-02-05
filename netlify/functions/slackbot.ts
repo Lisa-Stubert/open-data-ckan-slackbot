@@ -124,7 +124,7 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
    }
  }
 
-app.message("hello bot", async ({ message }) => {
+app.message("Was gibt's Neues im Open Data Portal?", async ({ message }) => {
   await replyMessage(message.channel, message.ts);
 });
 
