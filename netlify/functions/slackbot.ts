@@ -121,7 +121,13 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
 //     });
 
 app.message("hello bot", async ({ command, say }) => {
-  await say("Hi!");
+  let days = 7
+  console.log("days",days)
+  
+  const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
+
+  const text = await processData(data, days, "C04GSFP558B");
+  await say(text);
 });
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
