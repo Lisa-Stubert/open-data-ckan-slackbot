@@ -58,7 +58,7 @@ function findUpdated(data: { [x: string]: any; }, days: number) {
   return updatedArray;
 }
 
-function generateTextResponse (newestArray: any[], updatedArray: any[], days: number) {
+function generateTextResponse_newest (newestArray: any[], days: number) {
   let text = ""
   if (newestArray.length === 0) {
     text = text.concat("*Keine neuen Datensätze!*\nIn den letzten " + days + " Tagen wurden keine neuen Datensätze im Berliner Datenportal veröffentlicht.\n");
@@ -69,6 +69,11 @@ function generateTextResponse (newestArray: any[], updatedArray: any[], days: nu
       text = text.concat(">*<https://daten.berlin.de/search/node/" + newestArray[obj].title.toString().replace(/\s/g, "%20") + "|" + newestArray[obj].title.toString() + ">*\n>" + newestArray[obj].author.toString() + "\n>_" + newestArray[obj].date_released.toString() + "_\n")
     }
   }
+  return text
+}
+
+function generateTextResponse_updated (updatedArray: any[], days: number) {
+  let text = ""
   if (updatedArray.length === 0) {
     text = text.concat("\nIn den letzten " + days + " Tagen wurden keine der bereits veröffentlichten Datensätze im Berliner Datenportal geupdated.");
   }
@@ -88,7 +93,11 @@ const processData = async (data:any, days: number) => {
   }
   const newestArray = findNewest(resultsArray, days)
   const updatedArray = findUpdated(resultsArray, days)
-  const text = generateTextResponse(newestArray, updatedArray, days)
+  const text_newest = generateTextResponse_newest(newestArray, days)
+  const text_updated = generateTextResponse_updated(updatedArray, days)
+  const text : string[] = [];
+  text.push(text_newest)
+  text.push(text_updated)
   return text
 }
 
@@ -102,7 +111,7 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
       token: process.env.SLACK_BOT_TOKEN,
       channel: channelId,
       thread_ts: messageThreadTs,
-      text: text
+      text: text[0]
     });
   } catch (error) {
     console.error(error);
@@ -128,7 +137,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
     await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: body.channel_id,
-      text
+      text: text[0]
     })
   }
    catch (error) {
