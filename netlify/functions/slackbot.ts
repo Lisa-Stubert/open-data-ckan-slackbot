@@ -113,6 +113,12 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
       thread_ts: messageThreadTs,
       text: text[0]
     });
+    await app.client.chat.postMessage({
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channelId,
+      thread_ts: messageThreadTs,
+      text: text[1]
+    });
   } catch (error) {
     console.error(error);
    }
