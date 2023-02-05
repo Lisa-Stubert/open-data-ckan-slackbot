@@ -121,7 +121,7 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
 //     });
 
 app.message("hello bot", async ({ command, say }) => {
-  say("Hi!");
+  await say("Hi!");
 });
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
