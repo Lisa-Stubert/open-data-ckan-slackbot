@@ -97,18 +97,18 @@ const processData = async (data:any, days: number, channel_id: string) => {
 
 
 // Test Message: Bot reply on messages in slack channel
-async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
-  try {
-    await app.client.chat.postMessage({
-      token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: channelId,
-      thread_ts: messageThreadTs,
-      text: "Hello :wave: This is a test."
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
+// async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
+//   try {
+//     await app.client.chat.postMessage({
+//       token: `${process.env.SLACK_BOT_TOKEN}`,
+//       channel: channelId,
+//       thread_ts: messageThreadTs,
+//       text: "Hello :wave: This is a test."
+//     });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 // app.message(async ({ message }) => {
 //   await replyMessage(message.channel, message.ts);
@@ -119,15 +119,29 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
 //       channel: "C04GSFP558B",
 //       text: "Hello :wave: This is a test."
 //     });
+async function replyMessage(channelId: string, messageThreadTs: string): Promise<void> {
+  try {
 
-app.message("hello bot", async ({ command, say }) => {
-  let days = 7
-  console.log("days",days)
+    let days = 7
+    console.log("days",days)
+    
+    const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
   
-  const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
+    const text = await processData(data, days, "C04GSFP558B");
 
-  const text = await processData(data, days, "C04GSFP558B");
-  await say(text);
+    await app.client.chat.postMessage({
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channelId,
+      thread_ts: messageThreadTs,
+      text: text
+    });
+  } catch (error) {
+    console.error(error);
+   }
+ }
+
+app.message("hello bot", async ({ message }) => {
+  await replyMessage(message.channel, message.ts);
 });
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
