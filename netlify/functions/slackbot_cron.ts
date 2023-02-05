@@ -232,7 +232,7 @@ const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) =
     },
   };
   
-  //await app.processEvent(slackEvent);
+  await app.processEvent(slackEvent);
   return {
     statusCode: 200,
     body: "",
