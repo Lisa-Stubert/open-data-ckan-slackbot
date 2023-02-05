@@ -120,20 +120,8 @@ async function replyMessage(channelId: string, messageThreadTs: string): Promise
 //       text: "Hello :wave: This is a test."
 //     });
 
-app.message("hello bot", async ({ body, say }) => {
-
-    const days = 7
-    
-    console.log("days",days)
-    
-    const data = await getJSON("https://datenregister.berlin.de/api/3/action/package_search?start=0&rows=100")
-
-    const text = await processData(data, days, body.channel_id);
-    await app.client.chat.postMessage({
-      token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: body.channel_id,
-      text
-    })
+app.message("hello bot", async ({ command, say }) => {
+  say("Hi!");
 });
 
 // This is the Slash-Command to ask for newest data sets of the last XX days (number is given as an argument with the slash command)
