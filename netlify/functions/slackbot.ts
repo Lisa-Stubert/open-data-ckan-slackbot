@@ -127,7 +127,7 @@ app.command("/opendata", async ({ body, ack, say }) => {
 
     await app.client.chat.postMessage({
       token: `${process.env.SLACK_BOT_TOKEN}`,
-      channel: "C04GSFP558B",
+      channel: body.channel_id,
       text
     })
   }
